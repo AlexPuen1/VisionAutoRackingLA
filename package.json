@@ -1,0 +1,17 @@
+{
+  "name": "camaras-ovr-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Panel de inspección de cámaras OVR con frontend y backend separados.",
+  "workspaces": [
+    "backend"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "npm --workspace backend start",
+    "dev": "npm --workspace backend run dev",
+    "test": "node --check backend/src/server.js && node --check frontend/public/app.js && npm --workspace backend test"
+  }
+}

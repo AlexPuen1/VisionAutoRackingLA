@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c1320">
+    <title>Panel de cámaras OVR</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegación">
+        <a class="brand" href="#" aria-label="OVR, inicio">
+          <span class="brand-mark">O</span>
+          <span><strong>OVR</strong><small>Panel de inspección</small></span>
+        </a>
+        <div class="nav-label">ESPACIO DE TRABAJO</div>
+        <a class="nav-item active" href="#resumen"><span class="nav-icon">▦</span> Resumen</a>
+        <a class="nav-item" href="#relacion"><span class="nav-icon">⇄</span> Relación</a>
+        <a class="nav-item" href="#fotos"><span class="nav-icon">▧</span> Fotos inspeccionadas</a>
+        <div class="sidebar-foot">
+          <span class="live-dot"></span>
+          <span><strong>Consulta en vivo</strong><small>Datos de Autoraking</small></span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb">Operaciones <span>/</span> Inspección de cámaras</div>
+          <div class="connection-pill"><span class="live-dot"></span><span id="connection-text">Conectando</span></div>
+        </header>
+
+        <section class="page-heading" id="resumen">
+          <div>
+            <p class="eyebrow">CALIDAD · MONITOREO</p>
+            <h1>Inspección de cámaras</h1>
+            <p class="subtitle">Consulta los resultados y las imágenes capturadas por tus cámaras.</p>
+          </div>
+          <button class="button button-light" id="refresh-button" type="button"><span aria-hidden="true">↻</span> Actualizar</button>
+        </section>
+
+        <section class="filter-panel" aria-label="Filtros de consulta">
+          <div class="filter-title"><span class="filter-icon">☷</span><strong>Filtrar resultados</strong><span>Personaliza el periodo y la cámara</span></div>
+          <form id="filters-form" class="filters">
+            <label>Desde<input id="date-from" name="from" type="date"></label>
+            <label>Hasta<input id="date-to" name="to" type="date"></label>
+            <label>Línea<select id="line-filter" name="line"><option value="">Todas las líneas</option></select></label>
+            <label>Cámara<select id="camera-filter" name="camera"><option value="">Todas las cámaras</option></select></label>
+            <button class="button button-primary" type="submit">Aplicar filtros</button>
+          </form>
+        </section>
+
+        <div id="error-banner" class="error-banner" role="alert" hidden></div>
+
+        <section class="metrics" aria-label="Resumen de resultados">
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Fotos analizadas</span><span class="metric-icon neutral">▧</span></div>
+            <strong class="metric-value" id="total-count">—</strong><span class="metric-hint">En el periodo · <span id="total-size">—</span></span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Fotos buenas</span><span class="metric-icon good">✓</span></div>
+            <strong class="metric-value" id="good-count">—</strong><span class="metric-hint"><span class="status-text good-text">Buenas</span> · <span id="good-size">—</span></span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Fotos malas</span><span class="metric-icon bad">!</span></div>
+            <strong class="metric-value" id="bad-count">—</strong><span class="metric-hint"><span class="status-text bad-text">Malas</span> · <span id="bad-size">—</span></span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Sin clasificación</span><span class="metric-icon neutral">?</span></div>
+            <strong class="metric-value" id="unknown-count">—</strong><span class="metric-hint">Sin clasificar · <span id="unknown-size">—</span></span>
+          </article>
+        </section>
+
+        <section class="panel trend-panel">
+          <div class="section-heading">
+            <div><h2>Actividad por día</h2><p>Volumen de fotos y porcentaje de buenas por fecha</p></div>
+            <div class="chart-legend"><span><i class="legend-dot good"></i>Buenas</span><span><i class="legend-dot bad"></i>Malas</span><span><i class="legend-dot unknown"></i>Sin clasificar</span><span><i class="legend-line good-percent"></i>% buenas</span></div>
+          </div>
+          <div class="chart-scroll">
+            <div id="chart" class="chart" role="img" aria-label="Gráfica de fotos buenas y malas por día"></div>
+          </div>
+          <form id="daily-table-filters" class="daily-table-filters" aria-label="Filtrar actividad diaria">
+            <label>Desde<input id="daily-date-from" type="date"></label>
+            <label>Hasta<input id="daily-date-to" type="date"></label>
+            <label>Mínimo de fotos<input id="daily-photos-min" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+            <label>Máximo de fotos<input id="daily-photos-max" type="number" min="0" inputmode="numeric" placeholder="Sin límite"></label>
+            <button class="button button-light" type="reset">Limpiar</button>
+          </form>
+          <div id="daily-filter-summary" class="daily-filter-summary" aria-live="polite"></div>
+          <div class="chart-table-scroll">
+            <table class="chart-table">
+              <thead><tr><th>Fecha</th><th>Total fotos</th><th>Buenas</th><th>% buenas</th><th>Malas</th><th>% malas</th><th>Peso total</th><th>Peso buenas</th><th>Peso malas</th></tr></thead>
+              <tbody id="chart-data-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel relation-panel" id="relacion">
+          <div class="section-heading relation-heading">
+            <div><h2>Relación modelo y número de parte</h2><p>La receta corresponde a los primeros 4 dígitos del modelo; el resto identifica los números de parte.</p></div>
+            <label class="relation-search">Buscar
+              <input id="model-search" type="search" placeholder="Modelo, receta o número de parte" autocomplete="off">
+            </label>
+          </div>
+          <div class="relation-summary"><span class="metric-icon neutral">⇄</span><span id="model-count">Cargando modelos…</span></div>
+          <div class="relation-table-scroll">
+            <table class="relation-table">
+              <thead><tr><th>Modelo</th><th>Receta</th><th>Número(s) de parte</th><th>Fotos</th><th>Buenas</th><th>% buenas</th><th>Malas</th><th>% malas</th></tr></thead>
+              <tbody id="model-data-rows"></tbody>
+            </table>
+          </div>
+          <div id="model-empty-state" class="empty-state" hidden><span class="empty-icon">⇄</span><strong>No hay modelos que coincidan</strong><span>Prueba otra palabra o modifica los filtros.</span></div>
+        </section>
+
+        <section class="gallery-section" id="fotos">
+          <div class="section-heading gallery-heading">
+            <div><h2>Fotos inspeccionadas</h2><p>Revisa la imagen y el estado registrado por la cámara.</p></div>
+            <div class="gallery-controls">
+              <label class="photo-search">Buscar por nombre de imagen
+                <input id="photo-search" type="search" placeholder="Ej. 20261103_212105_T0000_01_CAM.jpg" autocomplete="off">
+              </label>
+              <label class="gallery-filter">Resultado
+                <select id="result-filter" aria-label="Filtrar por resultado">
+                  <option value="all">Todas</option><option value="good">Buenas</option><option value="bad">Malas</option><option value="unknown">Sin clasificar</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="gallery-scope" class="gallery-scope" hidden><span id="gallery-scope-label"></span><button id="clear-gallery-scope" class="text-button" type="button">Quitar filtro destacado</button></div>
+          <div class="notice"><span aria-hidden="true">ⓘ</span><span>La base de datos registra si la imagen es buena o mala, pero no la causa. La explicación del defecto queda pendiente para una futura captura por parte de ingeniería.</span></div>
+          <div id="photo-grid" class="photo-grid" aria-live="polite"></div>
+          <div id="empty-state" class="empty-state" hidden><span class="empty-icon">▧</span><strong>No hay fotos para mostrar</strong><span>Prueba con otras fechas o cambia los filtros.</span></div>
+          <div class="pagination"><span id="results-count"></span><div><button id="previous-page" class="button button-light" type="button">← Anterior</button><span id="page-label"></span><button id="next-page" class="button button-light" type="button">Siguiente →</button></div></div>
+        </section>
+        <footer class="footer">Panel de inspección OVR <span>·</span> Fuente: PrensasOvrPrueba.dbo.Autoraking</footer>
+      </main>
+    </div>
+
+    <dialog id="photo-dialog" class="photo-dialog">
+      <button id="close-dialog" class="close-dialog" type="button" aria-label="Cerrar">×</button>
+      <img id="dialog-image" alt="Foto de inspección ampliada">
+      <div id="dialog-image-unavailable" class="dialog-image-unavailable" role="status" hidden>La imagen no está disponible. Revisa IMAGE_ROOT y los permisos de acceso a la carpeta.</div>
+      <div id="dialog-caption" class="dialog-caption"></div>
+    </dialog>
+  </body>
+</html>
