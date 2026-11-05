@@ -84,6 +84,8 @@ test("uses the corporate API for single, read-only SELECT queries", async (t) =>
         grandTotal: 1, grandGood: 1, grandBad: 0, grandUnknown: 0,
         grandTotalBytes: 1536, grandGoodBytes: 1536, grandBadBytes: 0, grandUnknownBytes: 0,
       }];
+    } else if (body.command.includes("AS [allTimeBytes]")) {
+      rows = [{ allTimeBytes: 987654321 }];
     } else if (body.command.includes("GROUP BY [Modelo]")) {
       rows = [{ model: "0039_08035004_08035005", photos: "7", good: "6", bad: "1", unknown: "0" }];
     } else if (body.command.includes("totalRows")) {
@@ -112,6 +114,7 @@ test("uses the corporate API for single, read-only SELECT queries", async (t) =>
     [summary.totals.totalBytes, summary.totals.goodBytes, summary.totals.badBytes, summary.totals.unknownBytes],
     [1536, 1536, 0, 0],
   );
+  assert.equal(summary.totals.allTimeBytes, 987654321);
   assert.equal(summary.byDate.length, 1);
   assert.deepEqual(
     [summary.byDate[0].totalBytes, summary.byDate[0].goodBytes, summary.byDate[0].badBytes],
@@ -122,6 +125,9 @@ test("uses the corporate API for single, read-only SELECT queries", async (t) =>
   assert.match(queries[1], /AS \[goodBytes\]/);
   assert.match(queries[1], /AS \[badBytes\]/);
   assert.match(queries[1], /SELECT \[photoDate\], \[total\], \[good\], \[bad\], \[unknown\], \[totalBytes\], \[goodBytes\], \[badBytes\]/);
+  assert.match(queries[2], /AS \[allTimeBytes\]/);
+  assert.doesNotMatch(queries[2], /\[FechaFoto\]/);
+  assert.match(queries[2], /Cámara O''Brien/);
   assert.equal(summary.byDate[0].totalBytes, 1536);
   assert.equal(summary.byDate[0].goodBytes, 1536);
 
@@ -139,8 +145,8 @@ test("uses the corporate API for single, read-only SELECT queries", async (t) =>
       unknown: 0,
     },
   ]);
-  assert.match(queries[2], /GROUP BY \[Modelo\]/);
-  assert.match(queries[2], /Cámara O''Brien/);
+  assert.match(queries[3], /GROUP BY \[Modelo\]/);
+  assert.match(queries[3], /Cámara O''Brien/);
 
   const photosResponse = await fetch(`${baseUrl}/api/photos?result=good&page=1`);
   assert.equal(photosResponse.status, 200);
@@ -151,12 +157,12 @@ test("uses the corporate API for single, read-only SELECT queries", async (t) =>
   );
   assert.equal(searchResponse.status, 200);
   assert.equal((await searchResponse.json()).total, 1);
-  assert.match(queries[4], /\[Modelo\] = N'0039_O''Brien'/);
-  assert.match(queries[4], /\[NombreImagen\] LIKE N'%CAM~_100~%~\[x~\]~~%' ESCAPE N'~'/);
-  assert.match(queries[4], /END AS isGood, COUNT_BIG\(\*\) OVER\(\) AS totalRows\s+FROM[\s\S]+WHERE[\s\S]+?= 0 AND \[Modelo\]/);
+  assert.match(queries[5], /\[Modelo\] = N'0039_O''Brien'/);
+  assert.match(queries[5], /\[NombreImagen\] LIKE N'%CAM~_100~%~\[x~\]~~%' ESCAPE N'~'/);
+  assert.match(queries[5], /END AS isGood, COUNT_BIG\(\*\) OVER\(\) AS totalRows\s+FROM[\s\S]+WHERE[\s\S]+?= 0 AND \[Modelo\]/);
   const invalidSearchResponse = await fetch(`${baseUrl}/api/photos?search=${"x".repeat(201)}`);
   assert.equal(invalidSearchResponse.status, 400);
-  assert.equal(queries.length, 5);
+  assert.equal(queries.length, 6);
 
   const imageResponse = await fetch(`${baseUrl}/api/photos/1/image`);
   assert.equal(imageResponse.status, 503);

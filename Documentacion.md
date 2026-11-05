@@ -79,7 +79,7 @@ El panel presenta los campos `ID`, `FechaFoto`, `FechaCopiado`, `Linea`, `Camara
 
 `Status = 1` se interpreta como buena y `Status = 0` como mala. Si `Status` no es reconocible, `Estado` se usa como respaldo para valores conocidos como `Buena`, `Mala`, `Good`, `Bad`, `No Good`, `1` y `0`. Otros valores se contabilizan como “sin clasificación”. El panel no infiere una causa para el resultado.
 
-Las tarjetas del resumen inicial muestran el conteo y el tamaño acumulado de las fotos de cada categoría. El tamaño se calcula a partir de `TamanoBytes`, se presenta en bytes, KB, MB, GB o TB (unidades de 1024) y respeta los filtros activos. Los tamaños nulos o no numéricos se consideran cero para la suma.
+La tarjeta **Fotos analizadas** muestra el tamaño del periodo seleccionado y el consumo total de todas las fechas en el mismo cuadro. El consumo total no aplica filtros de fecha, pero respeta los filtros de línea y cámara. La quinta tarjeta, **FTQ**, muestra la proporción de fotos buenas respecto a todas las fotos analizadas en el periodo, junto con el conteo de buenas sobre total. Las tarjetas de fotos buenas, malas y sin clasificación muestran sus conteos y tamaños del periodo. Los tamaños se calculan desde `TamanoBytes` y se presentan en bytes, KB, MB, GB o TB (unidades de 1024); valores nulos o no numéricos cuentan como cero.
 
 ## Relación de modelos y números de parte
 
@@ -95,7 +95,7 @@ La galería permite buscar una parte del nombre de imagen en la base de datos. L
 
 Debajo de la gráfica se presenta una tabla por fecha con el total de fotos, cantidad de buenas y malas, porcentajes de buenas y malas respecto al total de fotos tomadas ese día, y peso total/de buenas/de malas. Los porcentajes se muestran con hasta un decimal; los pesos usan bytes, KB, MB, GB o TB (unidades de 1024) desde `TamanoBytes`. Así, las cifras exactas siguen disponibles en pantallas pequeñas, periodos extensos o valores cercanos que sean difíciles de comparar visualmente.
 
-La tabla diaria se puede filtrar localmente por rango de fechas y mínimo/máximo de fotos capturadas por día; no se vuelven a consultar datos mientras se usan estos filtros.
+La tabla diaria se puede filtrar localmente por el mínimo y máximo de fotos capturadas por día; las fechas se muestran como datos y no hay filtros de fecha adicionales dentro de esta sección.
 
 Al seleccionar una fecha desde una fila de la tabla o desde una etiqueta visible de la gráfica, la galería carga las fotos de ese día y muestra la fecha seleccionada. Se conservan los filtros generales de línea/cámara; el control de la galería permite quitar el filtro de fecha.
 

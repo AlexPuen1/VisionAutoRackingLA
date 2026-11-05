@@ -107,18 +107,13 @@ function appendSvgElement(parent, name, attributes = {}, text) {
 function appendChartTableRows(days) {
   const body = document.querySelector("#chart-data-rows");
   body.replaceChildren();
-  const dateFrom = document.querySelector("#daily-date-from").value;
-  const dateTo = document.querySelector("#daily-date-to").value;
   const minPhotosValue = document.querySelector("#daily-photos-min").value;
   const maxPhotosValue = document.querySelector("#daily-photos-max").value;
   const minPhotos = minPhotosValue === "" ? null : Number(minPhotosValue);
   const maxPhotos = maxPhotosValue === "" ? null : Number(maxPhotosValue);
   const filteredDays = days.filter((day) => {
-    const photoDate = String(day.photoDate).slice(0, 10);
     const total = Number(day.total) || 0;
-    return (!dateFrom || photoDate >= dateFrom)
-      && (!dateTo || photoDate <= dateTo)
-      && (minPhotos === null || total >= minPhotos)
+    return (minPhotos === null || total >= minPhotos)
       && (maxPhotos === null || total <= maxPhotos);
   });
   for (const day of filteredDays) {
@@ -170,6 +165,13 @@ function setMetricsLoading(loading) {
     value.setAttribute("aria-label", loading ? "Cargando" : value.textContent);
     document.querySelector(`#${key}-size`).classList.toggle("is-loading", loading);
   }
+  const allTimeSize = document.querySelector("#all-time-size");
+  allTimeSize.classList.toggle("is-loading", loading);
+  allTimeSize.setAttribute("aria-label", loading ? "Cargando consumo total" : allTimeSize.textContent);
+  const ftqRate = document.querySelector("#ftq-rate");
+  ftqRate.classList.toggle("is-loading", loading);
+  ftqRate.setAttribute("aria-label", loading ? "Cargando FTQ" : ftqRate.textContent);
+  document.querySelector("#ftq-counts").classList.toggle("is-loading", loading);
 }
 
 function setChartLoading(loading) {
@@ -516,6 +518,10 @@ async function loadSummary() {
       document.querySelector(`#${key}-count`).textContent = formatNumber(data.totals[key]);
       document.querySelector(`#${key}-size`).textContent = formatBytes(data.totals[`${key}Bytes`]);
     }
+    document.querySelector("#all-time-size").textContent = formatBytes(data.totals.allTimeBytes);
+    document.querySelector("#ftq-rate").textContent = formatPercent(data.totals.good, data.totals.total);
+    document.querySelector("#ftq-counts").textContent =
+      `${formatNumber(data.totals.good)} de ${formatNumber(data.totals.total)} fotos buenas`;
     renderChart(data.byDate);
   } finally {
     setMetricsLoading(false);

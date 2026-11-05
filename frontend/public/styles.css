@@ -68,13 +68,16 @@ h1 { margin-bottom: 6px; font: 800 24px Manrope, sans-serif; letter-spacing: -.0
 .filters input:focus, .filters select:focus, .gallery-filter select:focus { border-color: #9aabfa; box-shadow: 0 0 0 3px #4667e812; }
 .filters .button { height: 36px; white-space: nowrap; padding-inline: 15px; }
 .error-banner { margin-top: 14px; border: 1px solid #74434c; background: #311f2b; color: #ffabb0; border-radius: 9px; padding: 12px 14px; font-size: 12px; }
-.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 16px 0; }
+.metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
 .metric-card { min-height: 122px; padding: 15px 17px 13px; box-shadow: 0 4px 16px #00000018; transition: transform .22s var(--ease-out-expo), box-shadow .22s var(--ease-smooth), border-color .22s var(--ease-smooth); animation: fade-up 520ms var(--ease-out-expo) both; }
 .metric-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px #00000038; border-color: #3a4d6c; }
 .metric-card:nth-child(1) { animation-delay: 80ms; }
 .metric-card:nth-child(2) { animation-delay: 150ms; }
 .metric-card:nth-child(3) { animation-delay: 220ms; }
 .metric-card:nth-child(4) { animation-delay: 290ms; }
+.metric-card:nth-child(5) { animation-delay: 360ms; }
+.metric-card-ftq .metric-value { color: var(--green); }
+.metric-card .metric-hint { display: grid; gap: 4px; }
 .metric-top { display: flex; align-items: center; justify-content: space-between; }
 .metric-label { font-size: 11px; color: #a8b4c7; font-weight: 600; }
 .metric-icon { width: 27px; height: 27px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
@@ -263,7 +266,7 @@ h1 { margin-bottom: 6px; font: 800 24px Manrope, sans-serif; letter-spacing: -.0
 }
 
 @media (min-width: 1450px) { .main-content { padding-inline: 56px; } }
-@media (max-width: 1150px) { .main-content { padding-inline: 24px; } .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .photo-loading { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1150px) { .main-content { padding-inline: 24px; } .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .photo-loading { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 850px) { .sidebar { width: 68px; padding-inline: 12px; } .brand { padding-inline: 2px; } .brand > span:last-child, .nav-label { display: none; } .nav-item { display: flex; justify-content: center; padding: 12px 0; font-size: 0; } .nav-icon { font-size: 17px; } .sidebar-foot { justify-content: center; padding-inline: 0; } .sidebar-foot > span:last-child { display: none; } .main-content { margin-left: 68px; } .filters { grid-template-columns: repeat(2, 1fr); } .filters .button { grid-column: span 2; } .metrics { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 700px) { .relation-heading { align-items: stretch; flex-direction: column; } .relation-search { min-width: 100%; } .relation-table th, .relation-table td { padding: 9px 8px; } .gallery-heading { align-items: stretch; flex-direction: column; } .gallery-controls { align-items: end; } .photo-search { flex: 1; min-width: 0; } .daily-table-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } .daily-table-filters label, .daily-table-filters input, .daily-table-filters input[type="number"] { width: 100%; } }
 @media (max-width: 560px) { .sidebar { width: 52px; padding-inline: 8px; } .brand-mark { width: 34px; height: 34px; } .main-content { margin-left: 52px; padding-inline: 14px; } .topbar { height: 54px; } .breadcrumb { font-size: 9px; } .page-heading { align-items: flex-start; gap: 10px; } h1 { font-size: 19px; } .subtitle { max-width: 245px; line-height: 1.5; } .page-heading .button { padding: 8px; font-size: 0; } .page-heading .button span { font-size: 16px; } .filter-title > span:last-child { display: none; } .filters { gap: 9px; } .filters input, .filters select { font-size: 10px; padding-inline: 6px; } .metric-card { min-height: 108px; padding: 12px; } .metric-label { font-size: 10px; } .metric-value { font-size: 21px; } .photo-grid, .photo-loading { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; } .photo-meta { grid-template-columns: 1fr; } .panel { padding: 14px 12px 12px; } .section-heading h2 { font-size: 12px; } .pagination { font-size: 9px; } .pagination > div { gap: 5px; } .pagination .button { padding: 7px 6px; } }

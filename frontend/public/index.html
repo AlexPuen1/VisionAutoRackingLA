@@ -56,7 +56,11 @@
         <section class="metrics" aria-label="Resumen de resultados">
           <article class="metric-card">
             <div class="metric-top"><span class="metric-label">Fotos analizadas</span><span class="metric-icon neutral">▧</span></div>
-            <strong class="metric-value" id="total-count">—</strong><span class="metric-hint">En el periodo · <span id="total-size">—</span></span>
+            <strong class="metric-value" id="total-count">—</strong>
+            <div class="metric-hint">
+              <span>Periodo: <span id="total-size">—</span></span>
+              <span>Consumo total: <span id="all-time-size">—</span></span>
+            </div>
           </article>
           <article class="metric-card">
             <div class="metric-top"><span class="metric-label">Fotos buenas</span><span class="metric-icon good">✓</span></div>
@@ -70,6 +74,11 @@
             <div class="metric-top"><span class="metric-label">Sin clasificación</span><span class="metric-icon neutral">?</span></div>
             <strong class="metric-value" id="unknown-count">—</strong><span class="metric-hint">Sin clasificar · <span id="unknown-size">—</span></span>
           </article>
+          <article class="metric-card metric-card-ftq">
+            <div class="metric-top"><span class="metric-label">FTQ</span><span class="metric-icon good">✓</span></div>
+            <strong class="metric-value" id="ftq-rate">—</strong>
+            <span class="metric-hint"><span id="ftq-counts">— de — fotos buenas</span></span>
+          </article>
         </section>
 
         <section class="panel trend-panel">
@@ -81,8 +90,6 @@
             <div id="chart" class="chart" role="img" aria-label="Gráfica de fotos buenas y malas por día"></div>
           </div>
           <form id="daily-table-filters" class="daily-table-filters" aria-label="Filtrar actividad diaria">
-            <label>Desde<input id="daily-date-from" type="date"></label>
-            <label>Hasta<input id="daily-date-to" type="date"></label>
             <label>Mínimo de fotos<input id="daily-photos-min" type="number" min="0" inputmode="numeric" placeholder="0"></label>
             <label>Máximo de fotos<input id="daily-photos-max" type="number" min="0" inputmode="numeric" placeholder="Sin límite"></label>
             <button class="button button-light" type="reset">Limpiar</button>

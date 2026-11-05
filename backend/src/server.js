@@ -243,6 +243,16 @@ app.get("/api/summary", async (request, response, next) => {
       ) AS daily
       ORDER BY [photoDate]
     `);
+    const allDatesQuery = { ...request.query };
+    delete allDatesQuery.from;
+    delete allDatesQuery.to;
+    const allTimeRecords = await executeReadQuery(`
+      SELECT COALESCE(
+        SUM(COALESCE(TRY_CONVERT(bigint, [TamanoBytes]), CONVERT(bigint, 0))),
+        CONVERT(bigint, 0)
+      ) AS [allTimeBytes]
+      FROM [dbo].[Autoraking] ${readFilters(allDatesQuery)}
+    `);
     const totals = records.length
       ? {
         total: records[0].grandTotal,
@@ -253,8 +263,19 @@ app.get("/api/summary", async (request, response, next) => {
         goodBytes: records[0].grandGoodBytes,
         badBytes: records[0].grandBadBytes,
         unknownBytes: records[0].grandUnknownBytes,
+        allTimeBytes: allTimeRecords[0]?.allTimeBytes ?? 0,
       }
-      : { total: 0, good: 0, bad: 0, unknown: 0, totalBytes: 0, goodBytes: 0, badBytes: 0, unknownBytes: 0 };
+      : {
+        total: 0,
+        good: 0,
+        bad: 0,
+        unknown: 0,
+        totalBytes: 0,
+        goodBytes: 0,
+        badBytes: 0,
+        unknownBytes: 0,
+        allTimeBytes: allTimeRecords[0]?.allTimeBytes ?? 0,
+      };
     response.json({
       totals,
       byDate: records.map(({

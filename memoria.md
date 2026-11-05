@@ -60,8 +60,9 @@ Panel web en español para explorar resultados de inspección de la tabla `Prens
 - Se añadieron estados skeleton con shimmer durante consultas: las cuatro métricas, el gráfico, las filas de modelos y las tarjetas de fotos muestran placeholders y recuperan los datos (o el estado previo) al terminar la petición.
 - Las tarjetas de métricas ahora incluyen el tamaño acumulado de las fotos total, buenas, malas y no clasificadas. La API calcula subtotales usando `TamanoBytes` y mantiene los mismos filtros de periodo, línea y cámara.
 - La tabla diaria de **Actividad por día** incluye el porcentaje diario de buenas y malas (sobre el total de fotos de ese día) y los tamaños total, de buenas y de malas; se quitó la columna de fotos sin clasificar. Se corrigió la proyección SQL para devolver los subtotales diarios de bytes que faltaban en la respuesta.
+- El consumo histórico se muestra dentro del primer cuadro de **Fotos analizadas**, junto al consumo del periodo. El quinto cuadro se destinó a **FTQ**, mostrando el porcentaje de buenas y el conteo de fotos buenas sobre fotos analizadas.
 - La gráfica de actividad superpone una línea del porcentaje de fotos buenas, con eje derecho de 0 a 100% y puntos con valores emergentes.
-- La línea del porcentaje de buenas es naranja uniforme y mantiene etiquetas porcentuales junto a cada punto. La tabla de actividad filtra por rango de fechas y mínimo/máximo de fotos al día. La relación modelo/parte presenta porcentajes de buenas y malas usando las fotos totales del modelo como denominador.
+- La línea del porcentaje de buenas es naranja uniforme y mantiene etiquetas porcentuales junto a cada punto. La tabla de actividad permite filtrar por mínimo/máximo de fotos al día, sin controles adicionales de fecha. La relación modelo/parte presenta porcentajes de buenas y malas usando las fotos totales del modelo como denominador.
 - Las fechas visibles del gráfico y las fechas de la tabla diaria son seleccionables y abren la galería filtrada a ese día, con la fecha mostrada como contexto. Se mantienen los filtros de línea/cámara y se permite quitar el filtro destacado.
 
 ## Pruebas y verificaciones
