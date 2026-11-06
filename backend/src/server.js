@@ -3,20 +3,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const projectDirectory = path.resolve(__dirname, "..", "..");
-require("dotenv").config({ path: path.join(projectDirectory, ".env") });
-
-const scrapConfigPath = process.env.SCRAP_DB_CONFIG_PATH
-  || path.resolve(projectDirectory, "..", "SCRAPDashboard", "BaseDeDatos", ".env");
-if (!process.env.DB_API_BASE_URL || !process.env.DB_SERVER || !process.env.DB_API_TIMEOUT) {
-  try {
-    const scrapConfig = require("dotenv").parse(fs.readFileSync(scrapConfigPath));
-    for (const key of ["DB_API_BASE_URL", "DB_SERVER", "DB_API_TIMEOUT"]) {
-      if (!process.env[key] && scrapConfig[key]) process.env[key] = scrapConfig[key];
-    }
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-  }
-}
+const databaseConfigDirectory = path.join(projectDirectory, "DB");
+require("dotenv").config({ path: path.join(databaseConfigDirectory, ".env") });
 
 const app = express();
 const publicDirectory = path.resolve(__dirname, "..", "..", "frontend", "public");
@@ -34,7 +22,7 @@ const imageStatusSql = `
 
 async function executeReadQuery(command) {
   if (!databaseApiBaseUrl) {
-    const error = new Error("Configura DB_API_BASE_URL con la URL usada por SCRAPDashboard.");
+    const error = new Error("Configura DB_API_BASE_URL en DB/.env de CamarasOvr.");
     error.status = 503;
     throw error;
   }
@@ -410,7 +398,7 @@ app.get("/api/photos/:id/image", async (request, response, next) => {
   try {
     if (!/^\d+$/.test(request.params.id)) return response.status(400).json({ error: "El identificador de foto no es válido." });
     const imageRoot = process.env.IMAGE_ROOT;
-    if (!imageRoot) return response.status(503).json({ error: "Configura IMAGE_ROOT en el archivo .env." });
+    if (!imageRoot) return response.status(503).json({ error: "Configura IMAGE_ROOT en el archivo DB/.env." });
     const records = await executeReadQuery(
       `SELECT [RutaCompleta] AS [fullPath], [Ruta] AS [folder], [NombreImagen] AS [fileName] FROM [dbo].[Autoraking] WHERE [ID] = ${request.params.id}`,
     );

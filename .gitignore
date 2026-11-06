@@ -1,3 +1,4 @@
 node_modules/
 .env
+DB/.env
 npm-debug.log*

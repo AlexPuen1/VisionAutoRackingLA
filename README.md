@@ -5,14 +5,14 @@ Panel web en español y tema oscuro para consultar `PrensasOvrPrueba.dbo.Autorak
 ## Requisitos
 
 - Node.js 24 o posterior.
-- Acceso de red/VPN a la API corporativa usada por SCRAPDashboard y permisos de lectura en `PrensasOvrPrueba.dbo.Autoraking`.
+- Acceso de red/VPN al servicio de datos corporativo y permisos de lectura en `est04db`, base `PrensasOvrPrueba`, tabla `dbo.Autoraking`.
 - Una carpeta accesible por el usuario que ejecuta el panel, que contenga las imágenes.
 
 ## Configuración
 
-1. Copia `.env.example` como `.env`.
-2. Si `SCRAPDashboard` está junto a este proyecto, la app reutiliza automáticamente `DB_API_BASE_URL`, `DB_SERVER` y `DB_API_TIMEOUT` de `..\SCRAPDashboard\BaseDeDatos\.env`, y consulta `PrensasOvrPrueba`. Si la ruta es diferente, define `SCRAP_DB_CONFIG_PATH` o proporciona esos valores en `.env`. No requiere copiar contraseñas ni se conecta directamente a SQL Server.
-3. Configura `IMAGE_ROOT` con la raíz accesible donde están las fotos, por ejemplo `C:\FotosOVR`. Solo se mostrarán imágenes dentro de esa carpeta.
+1. Copia `DB/.env.example` como `DB/.env`.
+2. En `DB/.env`, configura `DB_API_BASE_URL` con la dirección HTTPS del servicio corporativo de datos. El servidor y la base ya están definidos como `est04db` y `PrensasOvrPrueba`; puedes ajustarlos aquí si el entorno lo requiere. CamarasOvr carga su propia configuración y no lee archivos de otros proyectos.
+3. En `DB/.env`, configura `IMAGE_ROOT` con la raíz accesible donde están las fotos, por ejemplo `C:\FotosOVR`. Solo se mostrarán imágenes dentro de esa carpeta.
 4. Ejecuta `npm install` y luego `npm start` desde la raíz del proyecto.
 5. Abre `http://127.0.0.1:3000`.
 

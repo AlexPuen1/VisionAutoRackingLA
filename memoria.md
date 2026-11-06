@@ -9,8 +9,8 @@ Panel web en español para explorar resultados de inspección de la tabla `Prens
 - **Frontend:** HTML, CSS y JavaScript nativo en `frontend/public`. Renderiza filtros, métricas, tabla diaria, barras SVG, galería paginada y vista ampliada de foto.
 - **Backend:** Express en `backend/src/server.js`. Sirve los recursos estáticos, valida filtros, envía consultas de lectura a la API corporativa y transmite imágenes disponibles.
 - **Pruebas:** `node:test` en `backend/test`. El workspace npm deja `npm install`, `npm start`, `npm run dev` y `npm test` disponibles desde la raíz.
-- **Datos:** se reutilizan las variables de conexión de `SCRAPDashboard\BaseDeDatos\.env` cuando ese proyecto está en la ruta hermana esperada. No se copian secretos.
-- **Imágenes:** `IMAGE_ROOT` limita la raíz de archivos permitida. `RutaCompleta`, `Ruta` y `NombreImagen` provienen de la fila consultada.
+- **Datos:** la conexión se configura en `DB/.env`, propio de CamarasOvr. El servidor SQL es `est04db` y la base `PrensasOvrPrueba`; la aplicación no lee archivos de configuración de otros proyectos.
+- **Imágenes:** `IMAGE_ROOT`, definida en `DB/.env`, limita la raíz de archivos permitida. `RutaCompleta`, `Ruta` y `NombreImagen` provienen de la fila consultada.
 
 ## Reglas de datos y presentación
 
@@ -41,8 +41,9 @@ Panel web en español para explorar resultados de inspección de la tabla `Prens
 
 ### Conexión y validación de datos
 
-- Se leyó la documentación y el cliente de conexión de `SCRAPDashboard`, sin imprimir los valores confidenciales de su archivo `.env`.
-- Se adaptó el panel a la API corporativa HTTPS de solo lectura que emplea ese proyecto y se automatizó la lectura de su configuración local.
+- Inicialmente se revisó el mecanismo de conexión de `SCRAPDashboard` y el panel reutilizó su configuración local. Posteriormente se eliminó esa dependencia en tiempo de ejecución: CamarasOvr carga exclusivamente su configuración local.
+- La conexión de CamarasOvr apunta al servidor SQL `est04db` y a la base `PrensasOvrPrueba` mediante el servicio corporativo HTTPS de solo lectura. La dirección del servicio se proporciona en `DB_API_BASE_URL`.
+- La configuración de datos se concentra en `DB/.env`; el archivo `DB/.env.example` es la plantilla sin secretos. El `.env` local previo se trasladó a esa ubicación y se excluye de Git.
 - Las pruebas de integración realizadas contra la base confirmaron las opciones de cámara/línea, filtros, agrupamientos, clasificación y paginación. Una de las consultas probadas devolvió 40 000 filas totales; un periodo de siete días arrojó 14 849 fotos: 14 025 buenas, 824 malas y cero sin clasificación.
 - Las imágenes en SQL apuntan a rutas UNC. Aunque el servidor de archivos resolvió en la red, no fue posible leer las carpetas con la identidad de Windows disponible: no se pudo completar una prueba real de transmisión de imagen. Para producción, el proceso debe ejecutarse con permisos de lectura en el recurso compartido y configurar `IMAGE_ROOT`.
 
@@ -60,7 +61,8 @@ Panel web en español para explorar resultados de inspección de la tabla `Prens
 - Se añadieron estados skeleton con shimmer durante consultas: las cuatro métricas, el gráfico, las filas de modelos y las tarjetas de fotos muestran placeholders y recuperan los datos (o el estado previo) al terminar la petición.
 - Las tarjetas de métricas ahora incluyen el tamaño acumulado de las fotos total, buenas, malas y no clasificadas. La API calcula subtotales usando `TamanoBytes` y mantiene los mismos filtros de periodo, línea y cámara.
 - La tabla diaria de **Actividad por día** incluye el porcentaje diario de buenas y malas (sobre el total de fotos de ese día) y los tamaños total, de buenas y de malas; se quitó la columna de fotos sin clasificar. Se corrigió la proyección SQL para devolver los subtotales diarios de bytes que faltaban en la respuesta.
-- El consumo histórico se muestra dentro del primer cuadro de **Fotos analizadas**, junto al consumo del periodo. El quinto cuadro se destinó a **FTQ**, mostrando el porcentaje de buenas y el conteo de fotos buenas sobre fotos analizadas.
+- El primer cuadro de **Fotos analizadas** muestra tanto el consumo del periodo seleccionado como el consumo histórico de todas las fechas. La consulta del consumo histórico omite los filtros de fecha, pero conserva los filtros de línea y cámara.
+- El quinto cuadro se destinó a **FTQ**: calcula `fotos buenas / fotos analizadas * 100` para el periodo seleccionado y muestra también el conteo de buenas sobre el total. El denominador incluye fotos no clasificadas; si no hay fotos, se muestra `0%`.
 - La gráfica de actividad superpone una línea del porcentaje de fotos buenas, con eje derecho de 0 a 100% y puntos con valores emergentes.
 - La línea del porcentaje de buenas es naranja uniforme y mantiene etiquetas porcentuales junto a cada punto. La tabla de actividad permite filtrar por mínimo/máximo de fotos al día, sin controles adicionales de fecha. La relación modelo/parte presenta porcentajes de buenas y malas usando las fotos totales del modelo como denominador.
 - Las fechas visibles del gráfico y las fechas de la tabla diaria son seleccionables y abren la galería filtrada a ese día, con la fecha mostrada como contexto. Se mantienen los filtros de línea/cámara y se permite quitar el filtro destacado.
@@ -75,12 +77,13 @@ npm audit --omit=dev
 semgrep scan --config=auto
 ```
 
-Las pruebas unitarias cubren rutas de imagen dentro/fuera de la raíz, página inicial, rechazo de filtros inválidos, rechazo de orígenes cruzados y contrato de consultas `SELECT` contra una API simulada. También se realizaron consultas de integración de solo lectura contra el recurso de SQL corporativo durante el desarrollo.
+Las pruebas unitarias cubren rutas de imagen dentro/fuera de la raíz, página inicial, rechazo de filtros inválidos, rechazo de orígenes cruzados y contrato de consultas `SELECT` contra una API simulada. La prueba del resumen verifica que la consulta de consumo histórico no aplique fechas y que conserve los filtros de línea/cámara. La suite cuenta actualmente con seis pruebas. También se realizaron consultas de integración de solo lectura contra el recurso de SQL corporativo durante el desarrollo.
 
 Semgrep mantiene una alerta informativa relacionada con que no se instaló un middleware general de CSRF; la API expone solo solicitudes `GET` de lectura y valida el origen. El reporte y la evaluación están en `SECURITY-REPORT.md`.
 
 ## Pendientes conocidos
 
+- Definir `DB_API_BASE_URL` en `DB/.env` en cada entorno desplegado. El archivo local actual apunta a `est04db` / `PrensasOvrPrueba`.
 - Conceder al usuario que ejecuta Node.js acceso de lectura al recurso UNC de fotos y definir `IMAGE_ROOT`. Hasta entonces, las consultas de datos funcionan, pero no se pueden afirmar fotos visibles desde este entorno.
 - Acordar con ingeniería si más adelante se necesita guardar la explicación de los resultados malos y cómo se incorporará al esquema de datos.
 - Si se requiere acceso compartido, definir autenticación y controles de acceso antes de cambiar el listener local predeterminado.

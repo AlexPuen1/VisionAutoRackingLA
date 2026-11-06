@@ -14,12 +14,14 @@ CamarasOvr/
 │   ├── src/server.js       API HTTP, consultas de lectura y entrega controlada de fotos
 │   ├── test/               Pruebas automatizadas del backend
 │   └── package.json        Dependencias y comandos del servidor
+├── DB/
+│   ├── .env.example        Plantilla de conexión propia de CamarasOvr
+│   └── .env                Configuración local (no se sube a Git)
 ├── frontend/
 │   └── public/
 │       ├── index.html      Estructura y componentes de la interfaz
 │       ├── styles.css      Tema oscuro, diseño adaptable y gráfica
 │       └── app.js          Filtros, llamadas API, visualizaciones y galería
-├── .env.example            Plantilla de configuración local
 ├── Documentacion.md        Referencia de funcionamiento
 ├── memoria.md              Historial técnico y decisiones del proyecto
 └── package.json            Comandos de nivel raíz y workspace npm
@@ -30,7 +32,7 @@ El frontend es HTML, CSS y JavaScript nativo, servido como archivos estáticos p
 ## Requisitos e inicio
 
 - Node.js 24 o posterior.
-- Acceso a la API corporativa usada por `SCRAPDashboard`.
+- Acceso a la API corporativa de datos.
 - Permiso de lectura sobre `PrensasOvrPrueba.dbo.Autoraking`.
 - Acceso de lectura desde la cuenta de Windows del servidor a la carpeta donde están las fotos.
 
@@ -55,9 +57,9 @@ npm test
 
 ## Conexión a datos
 
-El backend envía consultas `SELECT` mediante HTTPS a `POST /api/Utility/executeSQLCommand`, siguiendo el mecanismo de conexión de `SCRAPDashboard`. No se conecta directamente a SQL Server y no necesita duplicar las credenciales de otro servicio.
+El backend envía consultas `SELECT` mediante HTTPS a `POST /api/Utility/executeSQLCommand`. No se conecta directamente a SQL Server.
 
-Por defecto, el servidor intenta leer `DB_API_BASE_URL`, `DB_SERVER` y `DB_API_TIMEOUT` desde `..\SCRAPDashboard\BaseDeDatos\.env`. En otro despliegue, se puede indicar `SCRAP_DB_CONFIG_PATH` o definir las variables de conexión en `.env`. La base consultada es `PrensasOvrPrueba`; la configuración de base de datos puede cambiarse con `DB_DATABASE`.
+Toda la configuración de datos se concentra en `DB/.env`, de manera independiente de otros proyectos: `DB_API_BASE_URL` indica la dirección HTTPS del servicio corporativo; `DB_SERVER` identifica el servidor SQL (por defecto, `est04db`); `DB_DATABASE` selecciona la base (por defecto, `PrensasOvrPrueba`); y `DB_API_TIMEOUT` establece el tiempo máximo de espera en milisegundos. Copia `DB/.env.example` como `DB/.env` y completa la dirección del servicio. El backend solo carga ese archivo.
 
 El backend usa el almacén de certificados confiables de Windows (`--use-system-ca`), exige HTTPS, aplica un timeout y solo permite enviar consultas de lectura de una instrucción. Los valores de filtro se validan y escapan antes de formar la consulta; los valores `page` y `limit` son enteros con límite de tamaño.
 
@@ -107,7 +109,7 @@ Durante las consultas, las tarjetas de métricas, la gráfica, la relación y la
 
 El backend busca la foto en `RutaCompleta`; si no está disponible, intenta combinar `Ruta` y `NombreImagen`. Para proteger el equipo, solo transmite archivos dentro de `IMAGE_ROOT`, luego de verificar la ruta canónica y los enlaces simbólicos.
 
-Configura `IMAGE_ROOT` en el `.env` de la raíz del proyecto con la carpeta que contiene las imágenes. Para una carpeta compartida, utiliza la ruta UNC correspondiente y concede permisos de lectura a la **misma cuenta de Windows que inicia `npm start`**. Tener conexión de red o permiso para explorar la carpeta en otra sesión no garantiza que el proceso Node.js tenga acceso.
+Configura `IMAGE_ROOT` en `DB/.env` con la carpeta que contiene las imágenes. Para una carpeta compartida, utiliza la ruta UNC correspondiente y concede permisos de lectura a la **misma cuenta de Windows que inicia `npm start`**. Tener conexión de red o permiso para explorar la carpeta en otra sesión no garantiza que el proceso Node.js tenga acceso.
 
 Si la tarjeta indica que la imagen no está disponible, verifica que `IMAGE_ROOT` incluya la raíz real de las rutas guardadas en SQL Server y que la carpeta esté montada y accesible para el proceso. El backend no omite la restricción de directorio para intentar acceder a una ruta no permitida.
 
@@ -115,7 +117,7 @@ Si la tarjeta indica que la imagen no está disponible, verifica que `IMAGE_ROOT
 
 - El servidor escucha en `127.0.0.1` por defecto. No lo publiques directamente en Internet.
 - No copies contraseñas de Windows, API o SQL al repositorio.
-- El `.env` local está excluido de Git.
+- `DB/.env` está excluido de Git.
 - Las rutas API rechazan orígenes de otras páginas y solicitudes marcadas como `cross-site`.
 - Las rutas de imagen se restringen a `IMAGE_ROOT`.
 - Las consultas no modifican la base de datos.
