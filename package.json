@@ -10,6 +10,7 @@
     "node": ">=24.0.0"
   },
   "scripts": {
+    "launch": "npm ci && npm start",
     "start": "npm --workspace backend start",
     "dev": "npm --workspace backend run dev",
     "test": "node --check backend/src/server.js && node --check frontend/public/app.js && npm --workspace backend test"
