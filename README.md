@@ -14,7 +14,7 @@ Panel web en español y tema oscuro para consultar `PrensasOvrPrueba.dbo.Autorak
 2. En `DB/.env`, configura `DB_API_BASE_URL` con la dirección HTTPS del servicio corporativo de datos. El servidor y la base ya están definidos como `est04db` y `PrensasOvrPrueba`; puedes ajustarlos aquí si el entorno lo requiere. CamarasOvr carga su propia configuración y no lee archivos de otros proyectos.
 3. En `DB/.env`, configura `IMAGE_ROOT` con la raíz accesible donde están las fotos, por ejemplo `C:\FotosOVR`. Solo se mostrarán imágenes dentro de esa carpeta.
 4. Ejecuta `npm run launch` desde la raíz del proyecto para instalar todas las dependencias y arrancar el panel.
-5. Abre `http://127.0.0.1:3000`.
+5. Abre `http://127.0.0.1:4910`.
 
 El panel escucha en `127.0.0.1` por defecto. No lo expongas directamente a Internet; para uso compartido se requiere una red privada y controles de acceso adecuados. Todas las consultas se envían desde el servidor web a la API corporativa, son de solo lectura y no se aceptan SQL desde el navegador.
 

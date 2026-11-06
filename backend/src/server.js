@@ -428,7 +428,7 @@ app.use((error, _request, response, _next) => {
 });
 
 if (require.main === module) {
-  const port = Number(process.env.PORT || 3000);
+  const port = Number(process.env.PORT || 4910);
   const host = process.env.HOST || "127.0.0.1";
   app.listen(port, host, () => console.log(`Panel de cámaras disponible en http://${host}:${port}`));
 }

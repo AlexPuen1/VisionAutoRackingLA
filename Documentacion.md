@@ -36,14 +36,13 @@ El frontend es HTML, CSS y JavaScript nativo, servido como archivos estáticos p
 - Permiso de lectura sobre `PrensasOvrPrueba.dbo.Autoraking`.
 - Acceso de lectura desde la cuenta de Windows del servidor a la carpeta donde están las fotos.
 
-Desde la raíz del proyecto:
+Desde la raíz del proyecto, instala las dependencias y arranca la aplicación con:
 
 ```powershell
-npm install
-npm start
+npm run launch
 ```
 
-Visita `http://127.0.0.1:3000`. Para desarrollo con reinicio al detectar cambios:
+Visita `http://127.0.0.1:4910`. El puerto predeterminado es `4910`; puedes cambiarlo definiendo la variable de entorno `PORT`. Para desarrollo con reinicio al detectar cambios:
 
 ```powershell
 npm run dev
